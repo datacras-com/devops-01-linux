@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VirtualBox + Ubuntu 24.04 — Quraşdırma Təlimatı</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0F172A;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #052e1a 100%);
+      border-bottom: 1px solid #1e3328;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    header .badge {
+      display: inline-block;
+      background: #00A859;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    header h1 {
+      font-size: clamp(22px, 4vw, 36px);
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    header p {
+      margin-top: 10px;
+      color: #94a3b8;
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Requirements table */
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .req-card {
+      background: #13201a;
+      border: 1px solid #1e3328;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .req-card .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+    .req-card .min  { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    .req-card .rec  { font-size: 16px; font-weight: 600; color: #A7F3D0; }
+
+    /* Step */
+    .step {
+      margin-top: 48px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .step-num {
+      min-width: 40px;
+      height: 40px;
+      background: #00A859;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .step-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+
+    .tab-btn {
+      background: #13201a;
+      border: 1px solid #1e3328;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .tab-btn.active {
+      background: #00A859;
+      border-color: #00A859;
+      color: #fff;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Cards / Instruction lists */
+    .card {
+      background: #13201a;
+      border: 1px solid #1e3328;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .instruction-list {
+      list-style: none;
+      counter-reset: inst;
+    }
+
+    .instruction-list li {
+      counter-increment: inst;
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #1e3328;
+    }
+
+    .instruction-list li:last-child { border-bottom: none; }
+
+    .instruction-list li::before {
+      content: counter(inst);
+      min-width: 28px;
+      height: 28px;
+      background: #0f172a;
+      border: 1px solid #00A859;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #00A859;
+      margin-top: 2px;
+    }
+
+    .instruction-list li .text { color: #cbd5e1; font-size: 14px; }
+    .instruction-list li .text strong { color: #f1f5f9; }
+    .instruction-list li .text code {
+      background: #0f172a;
+      border: 1px solid #1e3328;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 13px;
+      color: #A7F3D0;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+    }
+
+    /* Warning / Info boxes */
+    .alert {
+      display: flex;
+      gap: 12px;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .alert-warn {
+      background: #2d1f07;
+      border: 1px solid #92400e;
+      color: #fcd34d;
+    }
+
+    .alert-info {
+      background: #052e1a;
+      border: 1px solid #00703A;
+      color: #D1E8DC;
+    }
+
+    .alert-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* Code block */
+    .code-block {
+      background: #0a1210;
+      border: 1px solid #1e3328;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    .code-block .cb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0e1a14;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: #64748b;
+      font-family: monospace;
+    }
+
+    .copy-btn {
+      background: #13201a;
+      border: 1px solid #1e3328;
+      border-radius: 6px;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 4px 10px;
+      transition: all .2s;
+    }
+
+    .copy-btn:hover { background: #00A859; border-color: #00A859; color: #fff; }
+
+    .code-block pre {
+      padding: 18px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e2e8f0;
+    }
+
+    .code-block pre .comment { color: #6b7280; }
+    .code-block pre .cmd { color: #86efac; }
+    .code-block pre .flag { color: #fbbf24; }
+    .code-block pre .str { color: #f472b6; }
+
+    /* VM params grid */
+    .vm-params {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .vm-param {
+      background: #0f172a;
+      border: 1px solid #1e3328;
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .vm-param .pname { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+    .vm-param .pval  { font-size: 17px; font-weight: 700; color: #A7F3D0; margin-top: 4px; }
+    .vm-param .psub  { font-size: 11px; color: #475569; margin-top: 2px; }
+
+    /* FAQ */
+    .faq { margin-top: 16px; }
+
+    details {
+      background: #13201a;
+      border: 1px solid #1e3328;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    summary {
+      padding: 16px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #e2e8f0;
+      font-size: 14px;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    summary::after { content: "+"; font-size: 20px; color: #00A859; }
+    details[open] summary::after { content: "−"; }
+
+    details .faq-body {
+      padding: 0 20px 16px;
+      font-size: 14px;
+      color: #94a3b8;
+      border-top: 1px solid #1e3328;
+      padding-top: 14px;
+    }
+
+    /* Packages */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: #475569;
+      font-size: 13px;
+      border-top: 1px solid #13201a;
+    }
+
+    @media (max-width: 600px) {
+      .req-grid { grid-template-columns: 1fr 1fr; }
+      .vm-params { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">DPE-01 — Data &amp; Platform Engineering</div>
+  <h1>VirtualBox + Ubuntu 24.04</h1>
+  <p>Linux Dərsi — Virtual Maşın Quraşdırma Təlimatı</p>
+</header>
+
+<div class="container">
+
+  <!-- Requirements -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">0</div>
+      <h2>Sistem Tələbləri</h2>
+    </div>
+    <div class="req-grid">
+      <div class="req-card">
+        <div class="label">RAM</div>
+        <div class="min">Minimum: 8 GB</div>
+        <div class="rec">16 GB</div>
+      </div>
+      <div class="req-card">
+        <div class="label">Disk</div>
+        <div class="min">Minimum: 30 GB boş</div>
+        <div class="rec">50 GB</div>
+      </div>
+      <div class="req-card">
+        <div class="label">macOS</div>
+        <div class="min">Minimum: 14.4</div>
+        <div class="rec">15+</div>
+      </div>
+      <div class="req-card">
+        <div class="label">Windows</div>
+        <div class="min">Minimum: 10 64-bit</div>
+        <div class="rec">11</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: VirtualBox -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <h2>VirtualBox Yüklə &amp; Qur</h2>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this, 'vb-silicon')">Mac Apple Silicon (M1/M2/M3/M4)</button>
+      <button class="tab-btn" onclick="switchTab(this, 'vb-intel')">Mac Intel</button>
+      <button class="tab-btn" onclick="switchTab(this, 'vb-win')">Windows</button>
+    </div>
+
+    <div id="vb-silicon" class="tab-panel active">
+      <div class="alert alert-warn">
+        <span class="alert-icon">⚠️</span>
+        <span>Apple Silicon üçün VirtualBox <strong>7.1+</strong> versiyası lazımdır. Köhnə versiyalar işləmir.</span>
+      </div>
+      <div class="card">
+        <ol class="instruction-list">
+          <li><span class="text"><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" style="color:#A7F3D0">virtualbox.org/wiki/Downloads</a> səhifəsinə get</span></li>
+          <li><span class="text"><strong>"macOS / Apple Silicon hosts"</strong> seçimini yüklə — fayl adı: <code>VirtualBox-7.x.x-macOS-arm64.dmg</code></span></li>
+          <li><span class="text">DMG-ni aç → <code>VirtualBox.pkg</code>-ni işə sal → "Continue" → "Install"</span></li>
+          <li><span class="text"><strong>System Settings → Privacy &amp; Security</strong> → aşağıda "System Extension" bloku görünəcək → <strong>"Allow"</strong> bas</span></li>
+          <li><span class="text">Mac-ı <strong>restart</strong> et</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="vb-intel" class="tab-panel">
+      <div class="card">
+        <ol class="instruction-list">
+          <li><span class="text"><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" style="color:#A7F3D0">virtualbox.org/wiki/Downloads</a> səhifəsinə get</span></li>
+          <li><span class="text"><strong>"macOS / Intel hosts"</strong> seçimini yüklə — fayl adı: <code>VirtualBox-7.x.x-macOS-x86.dmg</code></span></li>
+          <li><span class="text">DMG-ni aç → <code>VirtualBox.pkg</code>-ni işə sal → "Continue" → "Install"</span></li>
+          <li><span class="text"><strong>System Preferences → Security &amp; Privacy</strong> → "Allow" bas</span></li>
+          <li><span class="text">Restart tövsiyə edilir</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="vb-win" class="tab-panel">
+      <div class="card">
+        <ol class="instruction-list">
+          <li><span class="text"><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" style="color:#A7F3D0">virtualbox.org/wiki/Downloads</a> səhifəsinə get</span></li>
+          <li><span class="text"><strong>"Windows hosts"</strong> seçimini yüklə — fayl adı: <code>VirtualBox-7.x.x-Win.exe</code></span></li>
+          <li><span class="text"><code>.exe</code>-ni işə sal → "Next" → "Next" → "Install"</span></li>
+          <li><span class="text">UAC xəbərdarlığı çıxarsa <strong>"Yes"</strong> de</span></li>
+          <li><span class="text">"Network Interface" soruşarsa <strong>"Yes"</strong> de — internet müvəqqəti kəsilə bilər</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: ISO -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <h2>Ubuntu 24.04 ISO Yüklə</h2>
+    </div>
+
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠️</span>
+      <span>Apple Silicon Mac-da <strong>ARM64 ISO</strong> lazımdır. Adi <code>amd64.iso</code> işləməz!</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this, 'iso-silicon')">Mac Apple Silicon</button>
+      <button class="tab-btn" onclick="switchTab(this, 'iso-intel')">Mac Intel / Windows</button>
+    </div>
+
+    <div id="iso-silicon" class="tab-panel active">
+      <div class="card">
+        <p class="section-title">ARM64 ISO — cdimage.ubuntu.com</p>
+        <ol class="instruction-list">
+          <li><span class="text"><a href="https://cdimage.ubuntu.com/releases/24.04/release/" target="_blank" style="color:#A7F3D0">cdimage.ubuntu.com/releases/24.04/release/</a> səhifəsinə get</span></li>
+          <li><span class="text">Fayl adı: <code>ubuntu-24.04.4-desktop-arm64.iso</code> (~3.3 GB)</span></li>
+          <li><span class="text">Yükləmə ~10-20 dəq çəkə bilər — əvvəlcədən yüklə</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="iso-intel" class="tab-panel">
+      <div class="card">
+        <p class="section-title">AMD64 ISO — ubuntu.com/download/desktop</p>
+        <ol class="instruction-list">
+          <li><span class="text"><a href="https://ubuntu.com/download/desktop" target="_blank" style="color:#A7F3D0">ubuntu.com/download/desktop</a> səhifəsinə get</span></li>
+          <li><span class="text">Fayl adı: <code>ubuntu-24.04.x-desktop-amd64.iso</code> (~6 GB)</span></li>
+          <li><span class="text">Yükləmə ~10-20 dəq çəkə bilər — əvvəlcədən yüklə</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Create VM -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <h2>Virtual Maşın Yarat</h2>
+    </div>
+
+    <div class="vm-params">
+      <div class="vm-param">
+        <div class="pname">RAM</div>
+        <div class="pval">4 GB</div>
+        <div class="psub">minimum 2 GB</div>
+      </div>
+      <div class="vm-param">
+        <div class="pname">CPU</div>
+        <div class="pval">2 core</div>
+        <div class="psub">minimum 1</div>
+      </div>
+      <div class="vm-param">
+        <div class="pname">Disk</div>
+        <div class="pval">25 GB</div>
+        <div class="psub">minimum 20 GB</div>
+      </div>
+      <div class="vm-param">
+        <div class="pname">Video RAM</div>
+        <div class="pval">128 MB</div>
+        <div class="psub">tam ekran üçün</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <ol class="instruction-list">
+        <li><span class="text">VirtualBox-u aç → <strong>"New"</strong> düyməsini bas</span></li>
+        <li><span class="text"><strong>Name:</strong> <code>Ubuntu-24.04</code> | ISO Image: yüklədiyin <code>.iso</code> faylını seç | <strong>"Skip Unattended Installation"</strong> ✅ qeyd et</span></li>
+        <li><span class="text"><strong>Hardware:</strong> Base Memory → <code>4096 MB</code>, Processors → <code>2</code></span></li>
+        <li><span class="text"><strong>Hard Disk:</strong> "Create a Virtual Hard Disk Now" → <code>25 GB</code></span></li>
+        <li><span class="text"><strong>"Finish"</strong> — VM yarandı</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Step 4: Install Ubuntu -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <h2>Ubuntu Qur</h2>
+    </div>
+
+    <div class="card">
+      <ol class="instruction-list">
+        <li><span class="text">VM-i seç → <strong>"Start"</strong> düyməsini bas</span></li>
+        <li><span class="text">Boot menüsü → <strong>"Try or Install Ubuntu"</strong></span></li>
+        <li><span class="text">Dil seç → <strong>"Install Ubuntu"</strong></span></li>
+        <li><span class="text">Keyboard: <code>English (US)</code></span></li>
+        <li><span class="text"><strong>"Normal Installation"</strong> seç</span></li>
+        <li><span class="text"><strong>"Erase disk and install Ubuntu"</strong> → "Install Now" → "Continue"</span></li>
+        <li><span class="text">Timezone: <code>Baku</code></span></li>
+        <li><span class="text">İstifadəçi: Name: <code>Student</code> | Username: <code>student</code> | Password: <code>student123</code></span></li>
+        <li><span class="text"><strong>"Install"</strong> → ~10-15 dəqiqə gözlə</span></li>
+        <li><span class="text"><strong>"Restart Now"</strong> → Enter — Ubuntu hazırdır ✓</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Step 5: Post install -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <h2>Quraşdırmadan Sonra</h2>
+    </div>
+
+    <p style="color:#94a3b8; font-size:14px; margin-bottom:16px;">Ubuntu-da terminal aç (<code>Ctrl+Alt+T</code>) və bu paketləri qur:</p>
+
+    <div class="code-block">
+      <div class="cb-header">
+        <span>bash</span>
+        <button class="copy-btn" onclick="copyCode(this)">Kopyala</button>
+      </div>
+      <pre><span class="cmd">sudo apt update</span> <span class="flag">&amp;&amp;</span> <span class="cmd">sudo apt upgrade</span> <span class="flag">-y</span>
+<span class="cmd">sudo apt install</span> <span class="flag">-y</span> \
+  curl wget git vim nano \
+  net-tools iputils-ping \
+  python3 python3-pip \
+  docker.io docker-compose \
+  htop tree unzip</pre>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <span><strong>Shared Clipboard</strong> (Mac ↔ Ubuntu kopyala-yapışdır): VM Settings → General → Advanced → Shared Clipboard: <strong>Bidirectional</strong></span>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <span><strong>Tam ekran:</strong> VM işləyərkən <code>Host+F</code> (Mac-da: <code>Left Cmd+F</code>)</span>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">?</div>
+      <h2>Tez-tez Verilən Suallar</h2>
+    </div>
+
+    <div class="faq">
+      <details>
+        <summary>VM çox yavaşdır, nə edim?</summary>
+        <div class="faq-body">
+          Settings → System → Processor → <strong>Enable PAE/NX</strong> aktivləşdir.<br>
+          Settings → Display → Video Memory-ni <strong>128 MB</strong> et.<br>
+          2-dən çox CPU core ver.
+        </div>
+      </details>
+
+      <details>
+        <summary>Apple Silicon-da "Kernel driver not installed" xətası</summary>
+        <div class="faq-body">
+          System Settings → Privacy &amp; Security → <strong>"Allow"</strong> düyməsi görünməlidi.<br>
+          Görmürsənsə terminaldə işlət:
+          <div class="code-block" style="margin-top:10px">
+            <div class="cb-header"><span>bash</span><button class="copy-btn" onclick="copyCode(this)">Kopyala</button></div>
+            <pre><span class="cmd">sudo /sbin/vboxconfig</span></pre>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>"VERR_NEM_VM_CREATE_FAILED" xətası (Apple Silicon)</summary>
+        <div class="faq-body">
+          VirtualBox versiyası <strong>7.1-dən aşağıdır</strong>. Yenilə:<br>
+          <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" style="color:#A7F3D0">virtualbox.org/wiki/Downloads</a> → macOS Apple Silicon
+        </div>
+      </details>
+
+      <details>
+        <summary>VM-i tam silmək istəyirəm</summary>
+        <div class="faq-body">
+          VirtualBox-da VM üzərinə <strong>sağ klik</strong> → "Remove" → <strong>"Delete all files"</strong>
+        </div>
+      </details>
+
+      <details>
+        <summary>Ubuntu-da internet işləmir</summary>
+        <div class="faq-body">
+          VM Settings → Network → Adapter 1 → Attached to: <strong>NAT</strong> seç → OK → VM-i restart et.
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  DPE-01 — Data &amp; Platform Engineering Kursu
+</footer>
+
+<script>
+  function switchTab(btn, panelId) {
+    const parent = btn.closest('.step') || btn.closest('.container');
+    const allBtns = btn.closest('.tabs').querySelectorAll('.tab-btn');
+    allBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // find sibling panels
+    const panels = btn.closest('.step') ? btn.closest('.step').querySelectorAll('.tab-panel') : document.querySelectorAll('.tab-panel');
+    panels.forEach(p => p.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Kopyalandı ✓';
+      btn.style.background = '#00703A';
+      btn.style.borderColor = '#00703A';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.textContent = 'Kopyala';
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

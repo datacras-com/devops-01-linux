@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Linux for DevOps & Platform Engineering — DataCras</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+
+    :root{
+      --green:#00A859;
+      --green-dark:#00703A;
+      --green-light:#A7F3D0;
+      --green-pale:#D1E8DC;
+      --green-bg:#E8F5EE;
+      --bg:#0F172A;
+      --card:#1a2820;
+      --border:#1e3328;
+      --text:#F7F9F8;
+      --muted:#848688;
+      --yellow-bg:#FFF8E1;
+      --yellow:#F59E0B;
+    }
+
+    html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+
+    /* ── Slide container ── */
+    #deck{
+      width:100%;
+      height:100%;
+      position:relative;
+    }
+
+    .slide{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      padding:48px 72px;
+      background:var(--bg);
+      overflow:hidden;
+    }
+
+    .slide.active{display:flex;}
+
+    /* ── Progress bar ── */
+    #progress-bar{
+      position:fixed;
+      bottom:0;left:0;
+      height:3px;
+      background:var(--green);
+      transition:width .3s ease;
+      z-index:100;
+    }
+
+    /* ── Nav controls ── */
+    #nav{
+      position:fixed;
+      bottom:18px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      z-index:100;
+    }
+
+    .nav-btn{
+      width:36px;height:36px;
+      background:rgba(0,168,89,.15);
+      border:1px solid var(--green-dark);
+      border-radius:50%;
+      color:var(--green-light);
+      font-size:16px;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;
+    }
+    .nav-btn:hover{background:var(--green);color:#fff;}
+    .nav-btn:disabled{opacity:.25;cursor:default;}
+
+    #slide-counter{
+      font-size:12px;
+      color:var(--muted);
+      min-width:60px;
+      text-align:center;
+      font-family:monospace;
+    }
+
+    /* ── TOC button ── */
+    #toc-btn{
+      position:fixed;
+      top:16px;right:16px;
+      background:rgba(0,168,89,.15);
+      border:1px solid var(--green-dark);
+      border-radius:8px;
+      color:var(--green-light);
+      font-size:12px;
+      font-weight:600;
+      padding:6px 14px;
+      cursor:pointer;
+      z-index:200;
+      transition:all .2s;
+    }
+    #toc-btn:hover{background:var(--green);color:#fff;}
+
+    /* ── TOC overlay ── */
+    #toc-overlay{
+      position:fixed;inset:0;
+      background:rgba(15,23,42,.95);
+      z-index:300;
+      display:none;
+      flex-direction:column;
+      padding:40px 48px;
+      overflow-y:auto;
+    }
+    #toc-overlay.open{display:flex;}
+
+    #toc-overlay h2{
+      font-size:20px;font-weight:800;
+      color:var(--text);
+      margin-bottom:24px;
+    }
+    #toc-overlay h2 span{color:var(--green);}
+
+    .toc-close{
+      position:absolute;top:20px;right:24px;
+      background:none;border:none;
+      color:var(--muted);font-size:24px;
+      cursor:pointer;
+    }
+    .toc-close:hover{color:var(--text);}
+
+    .toc-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:10px;
+    }
+
+    .toc-item{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:12px 16px;
+      cursor:pointer;
+      transition:all .15s;
+      display:flex;align-items:center;gap:12px;
+    }
+    .toc-item:hover{border-color:var(--green);background:#052e1a;}
+    .toc-item.current{border-color:var(--green);background:#052e1a;}
+
+    .toc-num{
+      min-width:28px;height:28px;
+      background:#052e1a;border:1px solid var(--green-dark);
+      border-radius:6px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;color:var(--green-light);
+      font-family:monospace;
+      flex-shrink:0;
+    }
+
+    .toc-title{font-size:13px;color:var(--text);font-weight:500;}
+    .toc-ch{font-size:11px;color:var(--muted);}
+
+    /* ══════════════════════════════
+       SLIDE LAYOUTS
+    ══════════════════════════════ */
+
+    /* Title slide */
+    .slide-title{
+      text-align:center;
+      background:linear-gradient(135deg,var(--bg) 0%,#052e1a 100%);
+    }
+
+    .slide-title .badge{
+      display:inline-block;
+      background:#052e1a;
+      border:1px solid var(--green);
+      color:var(--green-light);
+      font-size:12px;font-weight:700;
+      letter-spacing:2px;text-transform:uppercase;
+      padding:6px 18px;border-radius:20px;
+      margin-bottom:24px;
+    }
+
+    .slide-title h1{
+      font-size:clamp(28px,4vw,52px);
+      font-weight:800;color:var(--text);
+      line-height:1.2;
+      margin-bottom:16px;
+    }
+
+    .slide-title h1 span{color:var(--green);}
+
+    .slide-title .subtitle{
+      font-size:16px;color:var(--muted);
+      margin-bottom:32px;
+    }
+
+    /* Chapter title slide */
+    .slide-chapter{
+      background:linear-gradient(135deg,var(--bg) 0%,#052e1a 100%);
+    }
+
+    .ch-label{
+      font-size:12px;font-weight:700;letter-spacing:2px;
+      text-transform:uppercase;color:var(--green);
+      margin-bottom:12px;
+    }
+
+    .slide-chapter h2{
+      font-size:clamp(24px,3.5vw,44px);
+      font-weight:800;color:var(--text);
+      margin-bottom:16px;
+    }
+
+    .slide-chapter .ch-desc{
+      font-size:16px;color:var(--muted);
+      max-width:600px;
+    }
+
+    .ch-topics-list{
+      margin-top:32px;
+      display:flex;flex-direction:column;gap:8px;
+      max-width:640px;width:100%;
+    }
+
+    .ch-topic-item{
+      display:flex;align-items:center;gap:12px;
+      background:rgba(0,168,89,.08);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:10px 16px;
+      font-size:14px;color:var(--text);
+    }
+
+    .ch-topic-item::before{
+      content:"";
+      width:6px;height:6px;
+      background:var(--green);
+      border-radius:50%;
+      flex-shrink:0;
+    }
+
+    /* Content slide */
+    .slide-content{
+      align-items:flex-start;
+    }
+
+    .slide-content .slide-heading{
+      font-size:clamp(18px,2.5vw,30px);
+      font-weight:800;color:var(--text);
+      margin-bottom:8px;
+      display:flex;align-items:center;gap:12px;
+    }
+
+    .slide-content .slide-heading::before{
+      content:"";
+      display:inline-block;
+      width:5px;height:28px;
+      background:var(--green);
+      border-radius:3px;
+      flex-shrink:0;
+    }
+
+    .slide-content .slide-sub{
+      font-size:13px;color:var(--muted);
+      margin-bottom:28px;
+      padding-left:17px;
+    }
+
+    /* Cards grid */
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:14px;
+      width:100%;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:18px 20px;
+    }
+
+    .card .c-icon{font-size:22px;margin-bottom:8px;}
+    .card .c-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .card .c-body{font-size:13px;color:var(--muted);line-height:1.6;}
+    .card code{
+      background:rgba(0,168,89,.12);
+      color:var(--green-light);
+      padding:1px 5px;border-radius:3px;
+      font-size:12px;font-family:monospace;
+    }
+
+    /* Two-column */
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      width:100%;
+    }
+
+    .col-panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:20px 24px;
+    }
+
+    .col-panel.green-border{border-color:var(--green-dark);}
+
+    .col-panel .panel-title{
+      font-size:11px;font-weight:700;letter-spacing:1.5px;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+
+    .mono-list{
+      font-family:"JetBrains Mono","Fira Code",monospace;
+      font-size:13px;
+      line-height:2.1;
+    }
+
+    /* Code block */
+    .code-block{
+      background:#0a1210;
+      border:1px solid var(--border);
+      border-radius:10px;
+      overflow:hidden;
+      width:100%;
+    }
+
+    .code-block .cb-head{
+      background:var(--card);
+      padding:8px 16px;
+      font-size:11px;color:var(--muted);
+      font-family:monospace;
+      display:flex;align-items:center;gap:8px;
+    }
+    .code-block .cb-head span{color:var(--green);}
+
+    .code-block pre{
+      padding:18px 20px;
+      font-family:"JetBrains Mono","Fira Code",monospace;
+      font-size:13px;line-height:1.9;
+      color:#e2e8f0;
+      overflow-x:auto;
+    }
+
+    .code-block pre .g{color:var(--green-light);font-weight:600;}
+    .code-block pre .dim{color:#475569;}
+
+    /* Dir table */
+    .dir-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+
+    .dir-table th{
+      padding:8px 14px;
+      background:var(--card);
+      color:var(--muted);
+      font-size:10px;font-weight:700;
+      text-transform:uppercase;letter-spacing:1px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+    }
+
+    .dir-table td{
+      padding:11px 14px;
+      border-bottom:1px solid var(--border);
+      color:#cbd5e1;
+      vertical-align:top;
+    }
+
+    .dir-table tr:last-child td{border-bottom:none;}
+    .dir-table tr:hover td{background:rgba(0,168,89,.05);}
+
+    .dir-table td code{
+      color:var(--green);font-weight:700;
+      font-family:monospace;font-size:14px;
+    }
+
+    .dir-table td .win{
+      color:var(--muted);font-family:monospace;font-size:11px;
+    }
+
+    /* Highlight box */
+    .info-box{
+      display:flex;gap:12px;
+      background:#052e1a;
+      border:1px solid var(--green-dark);
+      border-radius:10px;
+      padding:14px 18px;
+      font-size:13px;color:var(--green-pale);
+      width:100%;
+      margin-top:16px;
+    }
+
+    .info-box .ib-icon{font-size:18px;flex-shrink:0;}
+
+    /* Link card */
+    .link-card{
+      display:flex;align-items:center;gap:16px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px 20px;
+      text-decoration:none;
+      transition:all .2s;
+      width:100%;margin-bottom:10px;
+    }
+    .link-card:hover{border-color:var(--green);background:#052e1a;}
+    .link-card .lc-icon{
+      width:38px;height:38px;
+      background:#052e1a;border:1px solid var(--green-dark);
+      border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:18px;flex-shrink:0;
+    }
+    .link-card .lc-title{font-size:14px;font-weight:600;color:var(--text);}
+    .link-card .lc-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+    .link-card .lc-arr{margin-left:auto;color:var(--border);font-size:16px;transition:all .2s;}
+    .link-card:hover .lc-arr{color:var(--green);transform:translateX(4px);}
+
+    /* placeholder */
+    .coming-soon{
+      background:var(--card);
+      border:1px dashed var(--border);
+      border-radius:12px;
+      padding:40px;
+      text-align:center;
+      width:100%;
+    }
+    .coming-soon .cs-icon{font-size:36px;margin-bottom:12px;}
+    .coming-soon p{font-size:14px;color:var(--muted);}
+  </style>
+</head>
+<body>
+
+<!-- TOC button -->
+<button id="toc-btn" onclick="toggleTOC()">☰ Mövzular</button>
+
+<!-- TOC overlay -->
+<div id="toc-overlay">
+  <button class="toc-close" onclick="toggleTOC()">✕</button>
+  <h2>Linux for <span>DevOps & Platform Engineering</span></h2>
+  <div class="toc-grid" id="toc-grid"></div>
+</div>
+
+<!-- Progress -->
+<div id="progress-bar"></div>
+
+<!-- Navigation -->
+<div id="nav">
+  <button class="nav-btn" id="btn-prev" onclick="go(-1)">←</button>
+  <span id="slide-counter">1 / 1</span>
+  <button class="nav-btn" id="btn-next" onclick="go(1)">→</button>
+</div>
+
+<!-- ═══════════════════════
+     SLIDES
+═══════════════════════ -->
+<div id="deck">
+
+  <!-- ── SLIDE 0: Course Title ── -->
+  <div class="slide slide-title active" data-title="Kurs — Giriş" data-ch="DPE-01">
+    <div class="badge">DevOps · Linux Modulu</div>
+    <h1>Linux for <span>DevOps &</span><br><span>Platform Engineering</span></h1>
+  </div>
+
+  <!-- ── SLIDE 1: Chapter 1 intro ── -->
+  <div class="slide slide-chapter" data-title="Chapter 1" data-ch="CH1">
+    <div class="ch-label">Chapter 1</div>
+    <h2>Introduction to the Course</h2>
+    <p class="ch-desc">Linux-a giriş, mühitin hazırlanması, fayl sistemi ierarxiyası</p>
+    <div class="ch-topics-list">
+      <div class="ch-topic-item">Əməliyyat Sistemi Nədir?</div>
+      <div class="ch-topic-item">Linux Mühitini Hazırlamaq</div>
+      <div class="ch-topic-item">VirtualBox + Ubuntu 24.04</div>
+      <div class="ch-topic-item">MobaXterm ilə Linux-a Qoşulmaq</div>
+      <div class="ch-topic-item">Linux Filesystem Hierarchy</div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: Chapter 1 materials ── -->
+  <div class="slide slide-content" data-title="Chapter 1 — Materiallar" data-ch="CH1">
+    <div class="slide-heading">Chapter 1 — Materiallar</div>
+    <p class="slide-sub">Introduction to the Course</p>
+    <a href="bootcamp-intro-devops.html" class="link-card" target="_blank">
+      <div class="lc-icon">🎓</div>
+      <div><div class="lc-title">İlk Dərs — Bootcamp-a Giriş: DevOps Nədir?</div><div class="lc-desc">DevOps nədir, DevOps dövrü, Platform Engineering, 26 həftəlik yol xəritəsi, capstone, bonus ay</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="session-intro-why-linux-devops.html" class="link-card" target="_blank">
+      <div class="lc-icon">🚀</div>
+      <div><div class="lc-title">Giriş — DevOps kimi niyə Linux bilməlisən?</div><div class="lc-desc">Motivasiya, real ssenarilər, DevOps stack &amp; Linux əlaqəsi</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="session-00-what-is-os.html" class="link-card" target="_blank">
+      <div class="lc-icon">📽</div>
+      <div><div class="lc-title">Session 00 — Əməliyyat Sistemi Nədir?</div><div class="lc-desc">OS anlayışı, Linux tarixi, distribusiyanlar</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="session-01-linux-setup.html" class="link-card" target="_blank">
+      <div class="lc-icon">📽</div>
+      <div><div class="lc-title">Session 01 — Linux Mühitini Hazırlamaq</div><div class="lc-desc">VirtualBox, Ubuntu quraşdırma, ilk addımlar</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="session-02-linux-fs.html" class="link-card" target="_blank">
+      <div class="lc-icon">📽</div>
+      <div><div class="lc-title">Session 02 — Linux Filesystem Hierarchy</div><div class="lc-desc">Fayl sistemi ierarxiyası, /, /home, /etc, /var...</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="virtual-box/index.html" class="link-card" target="_blank">
+      <div class="lc-icon">🧪</div>
+      <div><div class="lc-title">Lab — VirtualBox + Ubuntu 24.04</div><div class="lc-desc">macOS / Windows-da virtual maşın quraşdırma</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+    <a href="mobaxterm/index.html" class="link-card" target="_blank">
+      <div class="lc-icon">🧪</div>
+      <div><div class="lc-title">Lab — MobaXterm ilə SSH Bağlantısı</div><div class="lc-desc">Windows &amp; macOS-dan Linux VM-ə qoşulma</div></div>
+      <span class="lc-arr">→</span>
+    </a>
+  </div>
+
+
+</div><!-- /deck -->
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let cur = 0;
+
+  function show(n){
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, slides.length-1));
+    slides[cur].classList.add('active');
+    document.getElementById('slide-counter').textContent = (cur+1)+' / '+slides.length;
+    document.getElementById('progress-bar').style.width = ((cur+1)/slides.length*100)+'%';
+    document.getElementById('btn-prev').disabled = cur===0;
+    document.getElementById('btn-next').disabled = cur===slides.length-1;
+    // highlight toc
+    document.querySelectorAll('.toc-item').forEach((el,i)=>{
+      el.classList.toggle('current', i===cur);
+    });
+  }
+
+  function go(d){ show(cur+d); }
+
+  // Keyboard
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') go(1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(-1);
+    if(e.key==='Escape') { const o=document.getElementById('toc-overlay'); if(o.classList.contains('open')) toggleTOC(); }
+  });
+
+  // TOC
+  function toggleTOC(){
+    document.getElementById('toc-overlay').classList.toggle('open');
+  }
+
+  // Build TOC
+  const grid = document.getElementById('toc-grid');
+  slides.forEach((s,i)=>{
+    const title = s.dataset.title||'Slide '+(i+1);
+    const ch = s.dataset.ch||'';
+    const div = document.createElement('div');
+    div.className='toc-item'+(i===0?' current':'');
+    div.innerHTML=`<div class="toc-num">${i+1}</div><div><div class="toc-title">${title}</div><div class="toc-ch">${ch}</div></div>`;
+    div.onclick=()=>{ show(i); toggleTOC(); };
+    grid.appendChild(div);
+  });
+
+  // Init
+  show(0);
+</script>
+
+<!-- Password Gate -->
+<div id="gate" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#0F172A;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+">
+  <div style="text-align:center;margin-bottom:32px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A859;margin-bottom:12px;">DevOps · Linux Modulu</div>
+    <div style="font-size:28px;font-weight:700;color:#f8fafc;">🔒 Giriş</div>
+    <div style="font-size:14px;color:#64748b;margin-top:8px;">Davam etmək üçün şifrəni daxil edin</div>
+  </div>
+  <div style="width:100%;max-width:320px;">
+    <input id="gate-input" type="password" placeholder="Şifrə" style="
+      width:100%;padding:14px 16px;
+      background:#1a2820;border:1px solid #1e3328;border-radius:10px;
+      color:#f1f5f9;font-size:16px;outline:none;
+      transition:border-color .2s;
+    "
+    onkeydown="if(event.key==='Enter')checkPass()"
+    onfocus="this.style.borderColor='#00A859'"
+    onblur="this.style.borderColor='#1e3328'"
+    />
+    <div id="gate-err" style="color:#f87171;font-size:13px;margin-top:8px;text-align:center;display:none;">Şifrə yanlışdır</div>
+    <button onclick="checkPass()" style="
+      width:100%;margin-top:12px;padding:14px;
+      background:#00A859;border:none;border-radius:10px;
+      color:#fff;font-size:15px;font-weight:700;cursor:pointer;
+      transition:background .2s;
+    "
+    onmouseover="this.style.background='#00703A'"
+    onmouseout="this.style.background='#00A859'"
+    >Daxil ol →</button>
+  </div>
+</div>
+
+<script>
+  const PASS = 'DataCras2026!';
+  if(sessionStorage.getItem('devops01-auth')==='1') document.getElementById('gate').style.display='none';
+  function checkPass(){
+    if(document.getElementById('gate-input').value===PASS){
+      sessionStorage.setItem('devops01-auth','1');
+      document.getElementById('gate').style.display='none';
+    } else {
+      document.getElementById('gate-err').style.display='block';
+      document.getElementById('gate-input').value='';
+      document.getElementById('gate-input').focus();
+    }
+  }
+</script>
+</body>
+</html>
