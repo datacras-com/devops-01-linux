@@ -160,10 +160,10 @@ section::after { color: #848688; font-size: 0.75em; }
 <h2 id="linux-filesystem-hierarchy-n%C9%99dir">Linux Filesystem Hierarchy nədir?</h2>
 <p><strong>Windows-da</strong> faylları görmək üçün sadəcə File Explorer-i açırsınız. <strong>Linux-da isə</strong> hər şey müəyyən bir qayda üzrə qovluqlara bölünmüşdür — bu quruluşa <strong>Filesystem Hierarchy</strong> deyilir.</p>
 <p>Fərqli düşünün: Linux-da proqramlar harada durur? Loglar harada yazılır? Konfiqurasiya faylları harada saxlanır? Hamısının <strong>öz yeri</strong> var.</p>
-<p><strong>DevOps-də bunu bilmək niyə lazımdır?</strong></p>
+<p><strong>DevOps-da bunu bilmək niyə lazımdır?</strong></p>
 <ul>
 <li>Pipeline-ınız xəta verir → <strong>log harada?</strong> <code>/var/log</code></li>
-<li>Spark konfiqurasiyasını dəyişmək lazımdır → <strong>harada?</strong> <code>/etc</code></li>
+<li>Jenkins konfiqurasiyasını dəyişmək lazımdır → <strong>harada?</strong> <code>/etc</code></li>
 <li>Yeni alət quraşdırdınız → <strong>hara gedib?</strong> <code>/opt</code> və ya <code>/usr</code></li>
 <li>Script yazdınız → <strong>harada saxlayırsınız?</strong> <code>/home</code></li>
 </ul>
@@ -238,22 +238,22 @@ section::after { color: #848688; font-size: 0.75em; }
 .ai-box h3 { color: #B45309; margin: 0 0 6px 0; font-size: 0.95em; }
 .ai-tip { background: #FFF8E1; border-left: 4px solid #F59E0B; padding: 8px 14px; margin: 8px 0; border-radius: 0 6px 6px 0; font-size: 0.82em; color: #78350F; }
 ;color:#0F172A;background-color:#F7F9F8;background-image:none;" data-marpit-pagination-total="16">
-<h2 id="%F0%9F%8F%97%EF%B8%8F-DevOps-d%C9%99-niy%C9%99-vacibdir"><img class="emoji" draggable="false" alt="🏗️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f3d7.svg" data-marp-twemoji=""/> DevOps-də Niyə Vacibdir?</h2>
+<h2 id="%F0%9F%8F%97%EF%B8%8F-DevOps-d%C9%99-niy%C9%99-vacibdir"><img class="emoji" draggable="false" alt="🏗️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f3d7.svg" data-marp-twemoji=""/> DevOps-da Niyə Vacibdir?</h2>
 <table>
 <thead>
 <tr>
 <th>Qovluq</th>
-<th>DevOps-də istifadəsi</th>
+<th>DevOps-da istifadəsi</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>/var/log</code></td>
-<td>Airflow, Spark, Kafka — bütün pipeline logları burada saxlanır</td>
+<td>Nginx, Jenkins, Prometheus — bütün servis logları burada saxlanır</td>
 </tr>
 <tr>
 <td><code>/etc</code></td>
-<td>Hadoop, PostgreSQL, Kafka konfiqurasiya faylları burada olur</td>
+<td>Nginx, PostgreSQL, Docker konfiqurasiya faylları burada olur</td>
 </tr>
 <tr>
 <td><code>/tmp</code></td>
@@ -261,7 +261,7 @@ section::after { color: #848688; font-size: 0.75em; }
 </tr>
 <tr>
 <td><code>/opt</code></td>
-<td>Spark, Hadoop, Flink kimi alətlər buraya quraşdırılır</td>
+<td>Jenkins, Ansible, Flink kimi alətlər buraya quraşdırılır</td>
 </tr>
 <tr>
 <td><code>/home</code></td>
