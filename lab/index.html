@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab — İzahlı Praktika</title>
+<style>
+:root{--g:#00A859;--d:#0F172A;--bg:#F7F9F8;--c:#fff;--b:#dbe4df;--t:#0F172A;--m:#475569;--code:#0F172A;--codet:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--c:#111a2e;--b:#1e3328;--t:#f1f5f9;--m:#94a3b8}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px/1.6 -apple-system,Segoe UI,sans-serif}
+.w{max-width:900px;margin:0 auto;padding:32px 16px 64px}h1{margin:0 0 4px}h1 span{color:var(--g)}
+.sub{color:var(--m);margin:0 0 24px}h2{margin-top:36px;border-bottom:2px solid var(--g);padding-bottom:4px}
+pre{background:var(--code);color:var(--codet);padding:14px 16px;border-radius:10px;overflow:auto;font-size:14px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.92em}p code,td code{background:rgba(0,168,89,.12);padding:1px 6px;border-radius:5px}
+table{width:100%;border-collapse:collapse;background:var(--c);border:1px solid var(--b);border-radius:10px;overflow:hidden;font-size:15px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--b);text-align:left}th{background:var(--g);color:#fff}
+tr.ch td{background:rgba(0,168,89,.14);font-weight:700}
+.flow{display:flex;flex-wrap:wrap;gap:8px}.flow div{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:8px 12px;font-size:14px}
+a{color:var(--g)}.warn{border-left:4px solid #f59e0b;background:rgba(245,158,11,.1);padding:10px 14px;border-radius:6px}
+</style></head><body><div class="w">
+<h1>🧪 <span>DevOps Linux</span> Lab</h1>
+<p class="sub">Dərsin praktikasını skript sizin əvəzinizə izah edir. Siz izləyir, proqnoz verir və tapşırığı özünüz həll edirsiniz.</p>
+
+<h2>Başlamaq (Ubuntu VM-də)</h2>
+<pre>git clone https://github.com/datacras-com/devops-01-linux.git
+cd devops-01-linux/lab
+./run list          # bütün dərslər
+./run 03            # Sessiya 03-ü addım-addım keç</pre>
+<div class="warn"><b>Öz VM-nizdə işlədin</b>, iş serverində yox. Hər şey <code>~/devops-lab/</code> sandbox-ında baş verir. Sistemi dəyişən dərslər (istifadəçi, paket) bitəndə özü geri qaytarır.</div>
+
+<h2>Hər addım necə görünür</h2>
+<div class="flow"><div>💡 Niyə?</div><div>⌨️ Əmr</div><div>├─ hər hissənin izahı</div><div>🔮 Gözlənti</div><div>🤔 Proqnoz (siz cavab verirsiniz)</div><div>┌ çıxış ┐</div><div>📖 Şərh</div><div>✅ yoxlama</div></div>
+<p>Dərsin sonunda <b>✍️ tapşırıqlar</b> (✅/❌, ipucu, lazım olsa həll) və bəzi dərslərdə <b>💥 failure injection</b>: skript sistemi qəsdən pozur, siz tapıb düzəldirsiniz.</p>
+
+<h2>Rejimlər</h2>
+<table><tr><th>Əmr</th><th>Nə edir</th></tr>
+<tr><td><code>./run 03</code></td><td>Addım-addım: <b>Enter</b>=icra, <code>s</code>=keç, <code>q</code>=çıx</td></tr>
+<tr><td><code>./run 03 --explain</code></td><td>İcra etmir, yalnız izahları oxuyur (dərsdən əvvəl)</td></tr>
+<tr><td><code>./run 03 --verify</code></td><td>Tapşırıqlarınızı yoxlayır</td></tr>
+<tr><td><code>./run 03 --auto</code></td><td>Müəllim demosu: özü gedir</td></tr></table>
+
+<h2>Dərslər</h2>
+<table><tr><th>Əmr</th><th>Mövzu</th><th>Addım</th><th>Tapşırıq</th><th></th></tr>
+<tr class="ch"><td colspan="5">Chapter 2</td></tr>
+<tr><td><code>./run 03</code></td><td>Əsas Linux əmrləri: serveri ilk tanıyaq</td><td>6</td><td>2</td><td></td></tr>
+<tr><td><code>./run 04</code></td><td>Fayl oxuma: log və konfiqurasiya faylları</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 05</code></td><td>Fayl yaratma: skript, konfiq və .env</td><td>6</td><td>3</td><td></td></tr>
+<tr><td><code>./run 06</code></td><td>Fayl redaktəsi: append, overwrite və sed -i</td><td>6</td><td>2</td><td>💥</td></tr>
+<tr><td><code>./run 07</code></td><td>Qovluq yaratma: deploy strukturu qurmaq</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 08</code></td><td>Fayl və qovluq silmək: təhlükəsiz və təhlükəli</td><td>7</td><td>3</td><td>💥</td></tr>
+<tr class="ch"><td colspan="5">Chapter 3</td></tr>
+<tr><td><code>./run 09</code></td><td>Kopyalama: cp ilə təhlükəsiz backup</td><td>6</td><td>3</td><td></td></tr>
+<tr><td><code>./run 10</code></td><td>mv: köçürmək və adını dəyişmək</td><td>6</td><td>3</td><td></td></tr>
+<tr><td><code>./run 11</code></td><td>Naviqasiya: cd, pwd və yollar</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 12</code></td><td>find, diff, file: tap, müqayisə et, tanı</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 13</code></td><td>grep: log və konfiqdə sətir tapmaq</td><td>9</td><td>5</td><td>💥</td></tr>
+<tr><td><code>./run 14</code></td><td>sed: konfiqdə dəyəri təhlükəsiz dəyişmək</td><td>6</td><td>3</td><td>💥</td></tr>
+<tr class="ch"><td colspan="5">Chapter 4</td></tr>
+<tr><td><code>./run 15</code></td><td>İstifadəçi və qrup idarəetməsi: servis hesabları</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 16</code></td><td>Başqa istifadəçi kimi işləmək: su, sudo -u, passwd</td><td>7</td><td>2</td><td></td></tr>
+<tr><td><code>./run 17</code></td><td>ls əmri: fayl siyahısı və icazələri oxumaq</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 18</code></td><td>Fayl icazələri: rwx, owner/group/others, oktal, umask</td><td>6</td><td>3</td><td></td></tr>
+<tr><td><code>./run 19</code></td><td>chmod: icazələri dəyişmək (simvolik və oktal)</td><td>5</td><td>3</td><td>💥</td></tr>
+<tr><td><code>./run 20</code></td><td>chown və chgrp: fayl sahibliyi</td><td>8</td><td>3</td><td>💥</td></tr>
+<tr class="ch"><td colspan="5">Chapter 5</td></tr>
+<tr><td><code>./run 21</code></td><td>Sistem məlumatı: serverin sağlamlıq yoxlaması</td><td>8</td><td>3</td><td></td></tr>
+<tr><td><code>./run 22</code></td><td>Proses idarəsi: ps, top, kill</td><td>7</td><td>3</td><td>💥</td></tr>
+<tr class="ch"><td colspan="5">Chapter 6</td></tr>
+<tr><td><code>./run 23</code></td><td>Paket quraşdırma: apt ilə alət qurmaq</td><td>7</td><td>2</td><td>💥</td></tr>
+<tr><td><code>./run 24</code></td><td>Paketləri yeniləmək və silmək</td><td>8</td><td>2</td><td>💥</td></tr>
+<tr><td><code>./run 25</code></td><td>apt ilə real alət: PostgreSQL workflow</td><td>7</td><td>3</td><td></td></tr>
+<tr class="ch"><td colspan="5">Chapter 7</td></tr>
+<tr><td><code>./run 26</code></td><td>Şəbəkə məlumatı: IP, route, ping, curl</td><td>7</td><td>3</td><td></td></tr>
+<tr><td><code>./run 27</code></td><td>Portlar: kim dinləyir, açıqdırmı?</td><td>6</td><td>3</td><td>💥</td></tr>
+</table>
+<p style="color:var(--m)">💥 = failure injection var. Dərs logu <code>~/devops-lab/lab-log-sNN.md</code> faylına yazılır, portfolio üçün GitHub-a commit edə bilərsiniz.</p>
+<p><a href="../index.html">← Kursun əsas səhifəsi</a></p>
+</div></body></html>

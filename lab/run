@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# İstifadə: ./run list | ./run NN [--auto|--explain|--dry|--verify] [--fast]
+cd "$(dirname "$0")" || exit 1
+case "${1:-}" in ""|-h|--help|list)
+  echo "DevOps Linux Lab — dərs praktikaları"; echo
+  for d in lessons/*/; do n=$(basename "$d"); printf '  %s  %s\n' "${n%%-*}" "$(sed -n 's/^lab_init [0-9]* "\(.*\)"/\1/p' "$d/lesson.sh" | head -1)"; done
+  echo; echo "İşlət:  ./run 03          (addım-addım, Enter ilə)"
+  echo "        ./run 03 --auto   (müəllim demosu, özü gedir)"
+  echo "        ./run 03 --explain (icra etmədən oxu)   ./run 03 --verify (tapşırıqları yoxla)"; exit 0;; esac
+num=$(printf '%02d' "$((10#$1))"); shift
+dir=$(ls -d lessons/$num-* 2>/dev/null | head -1); [ -n "$dir" ] || { echo "Dərs $num tapılmadı. ./run list"; exit 1; }
+export LAB_MODE=step
+for a in "$@"; do case $a in --auto) LAB_MODE=auto;; --explain) LAB_MODE=explain;; --dry) LAB_MODE=dry;; --verify) LAB_MODE=verify;; --fast) export LAB_DELAY=0;; esac; done
+export LAB_LESSON_FILE="$PWD/$dir/lesson.sh"
+# shellcheck disable=SC1091
+. lib/lab.sh
+. "$dir/lesson.sh"

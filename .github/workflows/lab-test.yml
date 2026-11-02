@@ -1,0 +1,18 @@
+name: lab-test
+on:
+  push:
+    paths: ['lab/**']
+  workflow_dispatch:
+jobs:
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y shellcheck
+      - run: shellcheck -S error -s bash lab/lib/lab.sh lab/run lab/test.sh
+  lessons:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bütün dərsləri Ubuntu 24.04 konteynerində --auto ilə sına
+        run: ./lab/test.sh
