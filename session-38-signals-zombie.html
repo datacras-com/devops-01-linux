@@ -399,12 +399,20 @@ pre code .hljs-title, pre code .hljs-type, pre code .hljs-class, pre code .hljs-
 pre code .hljs-operator, pre code .hljs-punctuation, pre code .hljs-subst { color: #E2E8F0; }
 ;color:#0F172A;background-color:#F7F9F8;background-image:none;" data-marpit-pagination-total="14">
 <h2 id="%F0%9F%94%81-proses-h%C9%99yat-d%C3%B6vr%C3%BC"><img class="emoji" draggable="false" alt="🔁" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f501.svg" data-marp-twemoji=""/> Proses Həyat Dövrü</h2>
-<p><img src="img/process-lifecycle.svg" alt="" style="width:940px;" /></p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash">pstree -p | <span class="hljs-built_in">head</span>       <span class="hljs-comment"># proses ağacı</span>
-ps -eo pid,ppid,<span class="hljs-built_in">stat</span>,cmd --forest | <span class="hljs-built_in">head</span> -20
-</code></pre>
+<p style="text-align:center;margin:0"><img src="img/process-lifecycle.svg" alt="" style="width:740px;" /></p>
+<table style="font-size:0.66em">
+<thead>
+<tr><th>Çağırış</th><th>Kim çağırır</th><th>Nə edir</th><th>Bənzətmə</th></tr>
+</thead>
+<tbody>
+<tr><td><code>fork()</code></td><td>Valideyn</td><td>Özünün <strong>kopyasını</strong> yaradır (yeni PID)</td><td>Müdir işçi işə götürür</td></tr>
+<tr><td><code>exec()</code></td><td>Uşaq</td><td>Kopyanı <strong>başqa proqrama</strong> çevirir</td><td>İşçiyə konkret tapşırıq verilir</td></tr>
+<tr><td><code>exit(0)</code></td><td>Uşaq</td><td>İşi bitirir, <strong>exit kodu</strong> qoyub gedir (0 = uğurlu)</td><td>İşçi hesabat yazıb gedir</td></tr>
+<tr><td><code>wait()</code></td><td>Valideyn</td><td>Exit kodunu oxuyur, uşağı <strong>PID cədvəlindən silir</strong></td><td>Müdir hesabatı oxuyub qəbul edir</td></tr>
+</tbody>
+</table>
 <blockquote>
-<p>Proses bitəndə <strong>PID dərhal azad olmur</strong>. Valideyn <code>wait()</code> çağırıb exit kodunu götürməlidir.</p>
+<p><code>wait()</code> yoxdursa, uşaq bitsə də <strong>PID azad olmur</strong> → <strong>Zombie</strong>. Yoxla: <code>ps -eo pid,ppid,stat,cmd --forest</code></p>
 </blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-background-color="#F7F9F8" data-color="#0F172A" data-theme="default" data-style="section {
@@ -760,33 +768,23 @@ pre code .hljs-title, pre code .hljs-type, pre code .hljs-class, pre code .hljs-
 pre code .hljs-operator, pre code .hljs-punctuation, pre code .hljs-subst { color: #E2E8F0; }
 ;color:#0F172A;background-color:#F7F9F8;background-image:none;" data-marpit-pagination-total="14">
 <h2 id="%E2%9A%96%EF%B8%8F-sigterm-%C9%99vv%C9%99l-sigkill-sonra"><img class="emoji" draggable="false" alt="⚖️" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2696.svg" data-marp-twemoji=""/> SIGTERM Əvvəl, SIGKILL Sonra</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>1. kill -TERM  → proses təmizlənir: bağlantıları bağlayır, fayl yazır, çıxır
-2. 10–30 san gözlə
-3. hələ işləyirsə → kill -KILL (təmizlik YOXDUR: yarımçıq yazı, lock faylı)
-</code></pre>
-<table>
+<p style="text-align:center;margin:0"><img src="img/sigterm-sigkill.svg" alt="" style="width:760px;" /></p>
+<div class="columns" style="font-size:0.74em;line-height:1.4">
+<div><strong>SIGTERM (15)</strong> — «bağlan» xahişi. Proses onu <strong>tuta bilər</strong>: açıq bağlantıları bağlayır, yaddaşdakı datanı diskə yazır, <code>.pid</code>/lock faylını silir. <code>kill PID</code> default olaraq bunu göndərir.</div>
+<div><strong>SIGKILL (9)</strong> — kernel prosesi <strong>dərhal</strong> silir. Tutmaq, ignor etmək olmur. Nəticə: yarımçıq yazı, qalıq lock faylı, bəzən korlanmış data. Yalnız <code>kill -9 PID</code> ilə.</div>
+</div>
+<table style="font-size:0.62em">
 <thead>
-<tr>
-<th>Platforma</th>
-<th>Davranış</th>
-</tr>
+<tr><th>Platforma</th><th>Necə dayandırılır</th><th>SIGTERM-dən sonra gözləmə</th><th>Dəyişmək üçün parametr</th><th>Vaxt bitəndə</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><code>systemd</code></td>
-<td>SIGTERM → <code>TimeoutStopSec</code> (90s) → SIGKILL</td>
-</tr>
-<tr>
-<td><code>docker stop</code></td>
-<td>SIGTERM → 10 s → SIGKILL</td>
-</tr>
-<tr>
-<td>Kubernetes</td>
-<td>SIGTERM → <code>terminationGracePeriodSeconds</code> (30s) → SIGKILL</td>
-</tr>
+<tr><td><code>systemd</code></td><td><code>systemctl stop nginx</code></td><td><strong>90 san</strong> (default)</td><td><code>TimeoutStopSec=</code> (unit faylında)</td><td>SIGKILL</td></tr>
+<tr><td><code>docker</code></td><td><code>docker stop app</code></td><td><strong>10 san</strong></td><td><code>docker stop -t 30 app</code></td><td>SIGKILL</td></tr>
+<tr><td>Kubernetes</td><td><code>kubectl delete pod</code>, rolling update</td><td><strong>30 san</strong></td><td><code>terminationGracePeriodSeconds</code> (pod spec)</td><td>SIGKILL</td></tr>
 </tbody>
 </table>
-<blockquote>
+<p style="font-size:0.6em;margin:2px 0;color:#475569">Proses gözləmə müddətində özü çıxarsa, SIGKILL <strong>göndərilmir</strong>. Yavaş bağlanan app (böyük DB, queue) üçün müddəti artır.</p>
+<blockquote style="font-size:0.74em">
 <p>Konteynerdə PID 1 SIGTERM-i <strong>işləmirsə</strong> (shell wrapper), hər <code>stop</code> 10 saniyə gecikir və sonda SIGKILL olur.</p>
 </blockquote>
 </section>
@@ -873,44 +871,27 @@ pre code .hljs-variable, pre code .hljs-template-variable, pre code .hljs-meta, 
 pre code .hljs-title, pre code .hljs-type, pre code .hljs-class, pre code .hljs-function { color: #C4B5FD; }
 pre code .hljs-operator, pre code .hljs-punctuation, pre code .hljs-subst { color: #E2E8F0; }
 ;color:#0F172A;background-color:#F7F9F8;background-image:none;" data-marpit-pagination-total="14">
-<h2 id="%F0%9F%A7%9F-zombie-vs-%F0%9F%91%B6-orphan"><img class="emoji" draggable="false" alt="🧟" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f9df.svg" data-marp-twemoji=""/> Zombie vs <img class="emoji" draggable="false" alt="👶" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f476.svg" data-marp-twemoji=""/> Orphan</h2>
-<table>
+<h2 id="%F0%9F%A7%9F-zombie-vs-%F0%9F%91%B6-orphan"><img class="emoji" style="display:inline;height:1em;width:1em;margin:0;vertical-align:-0.12em" draggable="false" alt="🧟" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f9df.svg" data-marp-twemoji=""/> Zombie vs <img class="emoji" style="display:inline;height:1em;width:1em;margin:0;vertical-align:-0.12em" draggable="false" alt="👶" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f476.svg" data-marp-twemoji=""/> Orphan</h2>
+<p style="text-align:center;margin:0"><img src="img/zombie-orphan.svg" alt="" style="width:660px;" /></p>
+<table style="font-size:0.6em">
 <thead>
-<tr>
-<th></th>
-<th><strong>Zombie</strong></th>
-<th><strong>Orphan</strong></th>
-</tr>
+<tr><th></th><th>Zombie</th><th>Orphan</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>Vəziyyət</td>
-<td>Uşaq <strong>bitib</strong>, valideyn <code>wait()</code> çağırmayıb</td>
-<td>Valideyn <strong>bitib</strong>, uşaq işləyir</td>
-</tr>
-<tr>
-<td>Resurs</td>
-<td>PID cədvəlində yer tutur (CPU/RAM yox)</td>
-<td>Normal işləyir</td>
-</tr>
-<tr>
-<td>Kim həll edir</td>
-<td>Valideyn (və ya valideyni öldür)</td>
-<td>PID 1 (<code>init</code>/<code>systemd</code>) övladlığa götürür</td>
-</tr>
-<tr>
-<td><code>kill -9</code> işləyir?</td>
-<td><strong>Xeyr</strong>, artıq ölüdür</td>
-<td>Bəli</td>
-</tr>
+<tr><td>Problemdir?</td><td><strong>Bəli</strong>, çoxalsa PID limiti dolur</td><td>Adətən yox, <code>systemd</code> idarə edir</td></tr>
+<tr><td>Kim həll edir</td><td>Valideyn <code>wait()</code> etməli (və ya valideyni yenidən başlat)</td><td>Heç kim, avtomatik PID 1-ə keçir</td></tr>
+<tr><td><code>kill -9</code> işləyir?</td><td><strong>Xeyr</strong>, artıq ölüdür</td><td>Bəli, adi proses kimi</td></tr>
 </tbody>
 </table>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash">ps -eo pid,ppid,<span class="hljs-built_in">stat</span>,cmd | awk <span class="hljs-string">&#x27;$3 ~ /Z/ {print}&#x27;</span>
-<span class="hljs-comment">#  2210  2100 Z  [worker] &lt;defunct&gt;      ← PPID 2100 problemdir</span>
-</code></pre>
-<blockquote>
-<p><strong>Zombie-ni öldürmək olmaz. Valideynini düzəldin</strong> (SIGCHLD işləsin) və ya valideyni yenidən başladın.</p>
+<blockquote style="font-size:0.7em;padding:4px 14px;margin:3px 0">
+<p style="margin:0"><strong>Zombie-ni öldürmək olmaz, valideynini düzəldin</strong> (PPID sütunu valideyni göstərir).</p>
 </blockquote>
+<div style="background:#FFF8E1;border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:6px 14px;font-size:0.66em;line-height:1.45;margin:4px 0">
+<strong style="color:#B45309">Zombie tapan əmr:</strong> <code>ps -eo pid,ppid,stat,cmd | awk '$3 ~ /Z/'</code><br>
+<strong style="color:#B45309">awk nədir?</strong> Mətni <strong>sütunlara bölüb filtr edən</strong> alətdir. Hər sətir boşluqla bölünür: <code>$1</code> = 1-ci sütun, <code>$3</code> = 3-cü sütun. <code>~ /Z/</code> «tərkibində Z var» deməkdir.<br>
+<code>ps -eo pid,ppid,stat,cmd</code> sütunları: <code>$1</code>=PID, <code>$2</code>=PPID, <code>$3</code>=STAT, <code>$4</code>=CMD. Yəni <code>awk '$3 ~ /Z/'</code> = «yalnız <strong>STAT</strong> sütununda Z olan sətirləri göstər». Yüzlərlə prosesdən yalnız zombie qalır.<br>
+<em>Niyə <code>grep Z</code> yox?</em> grep bütün sətirə baxır, adında «Z» olan proseslər də gələrdi. awk yalnız <code>STAT</code> sütununa baxır.
+</div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-background-color="#F7F9F8" data-color="#0F172A" data-theme="default" data-style="section {
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -996,36 +977,26 @@ pre code .hljs-title, pre code .hljs-type, pre code .hljs-class, pre code .hljs-
 pre code .hljs-operator, pre code .hljs-punctuation, pre code .hljs-subst { color: #E2E8F0; }
 ;color:#0F172A;background-color:#F7F9F8;background-image:none;" data-marpit-pagination-total="14">
 <h2 id="%F0%9F%9A%A7-pid-limitl%C9%99ri--%C3%BC%C3%A7-s%C9%99viyy%C9%99"><img class="emoji" draggable="false" alt="🚧" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/1f6a7.svg" data-marp-twemoji=""/> PID Limitləri — Üç Səviyyə</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash"><span class="hljs-built_in">cat</span> /proc/sys/kernel/pid_max          <span class="hljs-comment"># sistem: 4194304 (64-bit default)</span>
-<span class="hljs-built_in">ulimit</span> -u                             <span class="hljs-comment"># istifadəçi: max proses sayı</span>
-<span class="hljs-built_in">cat</span> /sys/fs/cgroup/pids.max           <span class="hljs-comment"># cgroup (konteyner/pod): məs. 1024</span>
-<span class="hljs-built_in">cat</span> /sys/fs/cgroup/pids.current
-ps -eLf | <span class="hljs-built_in">wc</span> -l                       <span class="hljs-comment"># thread-lər də PID alır!</span>
-</code></pre>
-<table>
+<div class="columns" style="grid-template-columns:420px 1fr;align-items:center;gap:18px">
+<div><img src="img/pid-limits.svg" alt="" style="width:420px;margin:0" /></div>
+<div style="font-size:0.7em;line-height:1.4"><strong style="color:#DC2626">Limit dolanda nə problem yaranır?</strong>
+<ul style="margin:3px 0;padding-left:20px"><li style="font-size:1em">Yeni proses/thread <strong>yaranmır</strong>: <code>fork: retry: Resource temporarily unavailable</code></li>
+<li style="font-size:1em">App çökür: <code>pthread_create failed</code>, <code>Cannot fork</code></li>
+<li style="font-size:1em"><code>kubectl exec</code>, healthcheck, yeni SSH session <strong>açılmır</strong></li>
+<li style="font-size:1em">Səbəb: <strong>zombie yığılması</strong>, fork bomb, sızan thread-lər</li></ul></div>
+</div>
+<table style="font-size:0.6em">
 <thead>
-<tr>
-<th>Səviyyə</th>
-<th>Aşanda nə olur</th>
-</tr>
+<tr><th>Səviyyə</th><th>Kim qoyur</th><th>Necə baxılır</th><th>Aşanda nə olur</th></tr>
 </thead>
 <tbody>
-<tr>
-<td><code>pid_max</code></td>
-<td>Heç bir proses yaranmır</td>
-</tr>
-<tr>
-<td><code>ulimit -u</code></td>
-<td>Həmin user yeni proses aça bilmir</td>
-</tr>
-<tr>
-<td><code>pids.max</code> (cgroup)</td>
-<td>Konteyner daxilində <code>fork</code> xətası</td>
-</tr>
+<tr><td><code>pid_max</code></td><td>Kernel (64-bit: 4 194 304)</td><td><code>cat /proc/sys/kernel/pid_max</code></td><td>Heç bir proses yaranmır, <strong>bütün server</strong> donur</td></tr>
+<tr><td><code>ulimit -u</code></td><td>Admin (user başına)</td><td><code>ulimit -u</code></td><td>Həmin user yeni proses aça bilmir</td></tr>
+<tr><td><code>pids.max</code> (cgroup)</td><td>Docker / Kubernetes</td><td><code>cat /sys/fs/cgroup/pids.current</code> və <code>pids.max</code></td><td>Yalnız həmin <strong>konteyner</strong> <code>fork</code> edə bilmir, node qorunur</td></tr>
 </tbody>
 </table>
-<blockquote>
-<p>Docker: <code>--pids-limit</code>. Kubernetes: kubelet <code>podPidsLimit</code>.</p>
+<blockquote style="font-size:0.66em;padding:4px 14px;margin:4px 0">
+<p style="margin:0">Limit ayarı: Docker <code>--pids-limit</code>, Kubernetes kubelet <code>podPidsLimit</code>. Thread sayı: <code>ps -eLf | wc -l</code>. <strong>Məqsəd:</strong> bir pod bütün node-u çökdürməsin.</p>
 </blockquote>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-background-color="#F7F9F8" data-color="#0F172A" data-theme="default" data-style="section {

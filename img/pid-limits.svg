@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 235" width="460" height="235" font-family="'Segoe UI', Arial, sans-serif">
+<rect x="2" y="2" width="456" height="231" rx="14" fill="#F8FAFC" stroke="#0F172A" stroke-width="2.5"/>
+<text x="16" y="26" font-size="15" font-weight="700" fill="#0F172A">① Sistem: pid_max</text><text x="444" y="26" text-anchor="end" font-size="14" fill="#475569">4 194 304</text>
+<rect x="24" y="40" width="412" height="182" rx="12" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.5"/>
+<text x="38" y="63" font-size="15" font-weight="700" fill="#B45309">② İstifadəçi: ulimit -u</text><text x="424" y="63" text-anchor="end" font-size="14" fill="#475569">user başına</text>
+<rect x="46" y="76" width="368" height="134" rx="10" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.5"/>
+<text x="60" y="99" font-size="15" font-weight="700" fill="#DC2626">③ Konteyner/Pod: pids.max</text><text x="402" y="99" text-anchor="end" font-size="14" fill="#475569">məs. 1024</text>
+<g fill="#00A859"><circle cx="70" cy="125" r="6"/><circle cx="92" cy="125" r="6"/><circle cx="114" cy="125" r="6"/><circle cx="136" cy="125" r="6"/><circle cx="158" cy="125" r="6"/><circle cx="180" cy="125" r="6"/></g>
+<g fill="#9CA3AF"><circle cx="202" cy="125" r="6"/><circle cx="224" cy="125" r="6"/></g>
+<text x="240" y="130" font-size="14" fill="#0F172A">proses və thread = 1 PID</text>
+<text x="60" y="160" font-size="14" fill="#0F172A">Zombie-lər də bu sayı <tspan font-weight="700" fill="#DC2626">tutur</tspan> ↑</text>
+<text x="230" y="195" text-anchor="middle" font-size="14" font-weight="700" fill="#DC2626">Ən kiçik (daxili) limit ilk dolur</text></svg>
