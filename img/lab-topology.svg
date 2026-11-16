@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 235" width="900" height="235" font-family="'Segoe UI', Arial, sans-serif"><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00A859"/></marker><marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker></defs>
+<rect x="6" y="14" width="230" height="112" rx="12" fill="#fff" stroke="#0F172A" stroke-width="2.5"/>
+<text x="121" y="42" text-anchor="middle" font-size="17" font-weight="700" fill="#0F172A">Laptop (sənin maşının)</text>
+<text x="121" y="70" text-anchor="middle" font-size="14" fill="#0F172A">ssh client, curl</text><text x="121" y="92" text-anchor="middle" font-size="14" fill="#00703A">~/.ssh/config burada</text><text x="121" y="114" text-anchor="middle" font-size="13" fill="#475569">açar (private key) burada</text>
+<line x1="238" y1="70" x2="332" y2="70" stroke="#00A859" stroke-width="3" marker-end="url(#a)"/>
+<text x="285" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#00A859">ssh :22</text>
+<rect x="334" y="14" width="232" height="112" rx="12" fill="#E8F5EE" stroke="#00A859" stroke-width="2.5"/>
+<text x="450" y="42" text-anchor="middle" font-size="17" font-weight="700" fill="#00703A">bastion</text>
+<text x="450" y="70" text-anchor="middle" font-size="19" font-weight="700" fill="#0F172A">192.168.0.31</text><text x="450" y="94" text-anchor="middle" font-size="14" fill="#0F172A">giriş qapısı: yalnız sshd</text><text x="450" y="114" text-anchor="middle" font-size="13" fill="#475569">private açar saxlanmır</text>
+<line x1="568" y1="70" x2="662" y2="70" stroke="#00A859" stroke-width="3" marker-end="url(#a)"/>
+<text x="615" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#00A859">ssh :22</text>
+<rect x="664" y="14" width="230" height="112" rx="12" fill="#fff" stroke="#0F172A" stroke-width="2.5"/>
+<text x="779" y="42" text-anchor="middle" font-size="17" font-weight="700" fill="#0F172A">app-1 (daxili server)</text>
+<text x="779" y="70" text-anchor="middle" font-size="19" font-weight="700" fill="#0F172A">192.168.0.15</text><text x="779" y="94" text-anchor="middle" font-size="14" fill="#0F172A">sshd + test veb (:8000)</text><text x="779" y="114" text-anchor="middle" font-size="13" fill="#475569">ufw: yalnız 192.168.0.31</text>
+<path d="M121 128 L121 182 L779 182 L779 130" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#r)"/>
+<text x="450" y="174" text-anchor="middle" font-size="15" font-weight="700" fill="#DC2626">birbaşa ssh: timed out ✖</text>
+<text x="450" y="208" text-anchor="middle" font-size="14" fill="#475569">Hamısı eyni LAN-dadır. «Daxili» olmağı ufw ilə süni təmin edirik (cloud-da private subnet + Security Group edir).</text></svg>
