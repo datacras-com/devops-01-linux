@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 215" width="900" height="215" font-family="'Segoe UI', Arial, sans-serif"><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<g font-size="15" font-weight="700" text-anchor="middle">
+<rect x="4" y="20" width="108" height="50" rx="10" fill="#fff" stroke="#0F172A" stroke-width="2"/><text x="58" y="50" fill="#0F172A">start #1</text>
+<rect x="142" y="20" width="108" height="50" rx="10" fill="#fff" stroke="#0F172A" stroke-width="2"/><text x="196" y="50" fill="#0F172A">start #2</text>
+<rect x="280" y="20" width="108" height="50" rx="10" fill="#fff" stroke="#0F172A" stroke-width="2"/><text x="334" y="50" fill="#0F172A">start #3</text>
+<rect x="418" y="20" width="108" height="50" rx="10" fill="#fff" stroke="#0F172A" stroke-width="2"/><text x="472" y="50" fill="#0F172A">start #4</text>
+<rect x="556" y="20" width="108" height="50" rx="10" fill="#fff" stroke="#0F172A" stroke-width="2"/><text x="610" y="50" fill="#0F172A">start #5</text>
+<rect x="702" y="12" width="192" height="66" rx="12" fill="#FEE2E2" stroke="#DC2626" stroke-width="3"/><text x="798" y="40" fill="#DC2626">start-limit-hit</text><text x="798" y="62" font-size="13" fill="#DC2626" font-weight="400">systemd artıq cəhd etmir</text>
+</g>
+<g stroke="#475569" stroke-width="2" marker-end="url(#a)"><line x1="112" y1="45" x2="140" y2="45"/><line x1="250" y1="45" x2="278" y2="45"/><line x1="388" y1="45" x2="416" y2="45"/><line x1="526" y1="45" x2="554" y2="45"/><line x1="664" y1="45" x2="700" y2="45" stroke="#DC2626"/></g>
+<g font-size="14" fill="#DC2626" text-anchor="middle" font-weight="700"><text x="58" y="96">çökdü ✖</text><text x="196" y="96">çökdü ✖</text><text x="334" y="96">çökdü ✖</text><text x="472" y="96">çökdü ✖</text><text x="610" y="96">çökdü ✖</text></g>
+<g font-size="12" fill="#475569" text-anchor="middle"><text x="127" y="112">RestartSec</text><text x="265" y="112">RestartSec</text><text x="403" y="112">RestartSec</text><text x="541" y="112">RestartSec</text></g>
+<path d="M4 128 L4 138 L664 138 L664 128" fill="none" stroke="#0F172A" stroke-width="2"/>
+<text x="334" y="160" text-anchor="middle" font-size="16" font-weight="700" fill="#0F172A">10 saniyə ərzində 5 cəhd = limit aşıldı</text>
+<text x="450" y="190" text-anchor="middle" font-size="14" fill="#475569">default: StartLimitIntervalSec=10s, StartLimitBurst=5  ·  Crash loop = start → çök → yenidən start → çök …</text></svg>

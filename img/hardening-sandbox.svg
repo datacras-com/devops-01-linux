@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 250" width="900" height="250" font-family="'Segoe UI', Arial, sans-serif">
+<rect x="2" y="2" width="438" height="246" rx="14" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.5"/>
+<text x="221" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#DC2626">Sərtləşdirmə YOXDUR, app hack olunub</text>
+<g font-size="15" fill="#0F172A"><text x="20" y="68">/etc, /usr (sistem faylları)</text><text x="20" y="104">/home (SSH açarları, parollar)</text><text x="20" y="140">/tmp (başqa servislərin faylları)</text><text x="20" y="176">setuid ilə root olmaq</text></g>
+<g font-size="15" font-weight="700" fill="#DC2626" text-anchor="end"><text x="424" y="68">dəyişə bilər ✖</text><text x="424" y="104">oxuya bilər ✖</text><text x="424" y="140">görə bilər ✖</text><text x="424" y="176">mümkündür ✖</text></g>
+<text x="221" y="222" text-anchor="middle" font-size="15" font-weight="700" fill="#DC2626">Hacker app-in bütün hüquqları ilə işləyir</text>
+<rect x="460" y="2" width="438" height="246" rx="14" fill="#F0FAF4" stroke="#00A859" stroke-width="2.5"/>
+<text x="679" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#00703A">Sərtləşdirmə VAR, eyni hack</text>
+<g font-size="15" fill="#0F172A"><text x="478" y="68">/etc, /usr  (ProtectSystem)</text><text x="478" y="104">/home  (ProtectHome)</text><text x="478" y="140">/tmp  (PrivateTmp)</text><text x="478" y="176">setuid  (NoNewPrivileges)</text></g>
+<g font-size="15" font-weight="700" fill="#00703A" text-anchor="end"><text x="882" y="68">yalnız oxunur ✔</text><text x="882" y="104">görünmür ✔</text><text x="882" y="140">öz /tmp-i ✔</text><text x="882" y="176">mümkün deyil ✔</text></g>
+<text x="679" y="222" text-anchor="middle" font-size="15" font-weight="700" fill="#00703A">Zərər yalnız app-in öz qutusu ilə məhdud</text></svg>
